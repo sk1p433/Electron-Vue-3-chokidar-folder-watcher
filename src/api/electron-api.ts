@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface ElectronFileFilter {
   name: string;
   extensions: string[];
@@ -9,6 +10,10 @@ export interface ElectronApi {
     folder: string,
     filters: ElectronFileFilter
   ) => Promise<string[]>;
+  send: any,
+  getSomeInfo: any,
+  onLog: any,
+  on: any,
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

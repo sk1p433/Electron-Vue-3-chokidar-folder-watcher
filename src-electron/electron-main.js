@@ -1,5 +1,6 @@
-import { app, BrowserWindow, nativeTheme } from 'electron'
+import { app, BrowserWindow, nativeTheme, ipcMain } from 'electron'
 import { initialize, enable } from '@electron/remote/main'
+
 import path from 'path'
 import os from 'os'
 
@@ -23,8 +24,8 @@ function createWindow () {
    */
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: 1000,
-    height: 600,
+    width: 1280,
+    height: 960,
     useContentSize: true,
     webPreferences: {
       contextIsolation: true,
@@ -66,3 +67,27 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+// IPC Handlers TEST
+
+// ipcMain.on('send', (event, args) => {
+//   console.log(args)
+// })
+
+
+// // ipcMain.handle('getSomeInfo', (event, message) => {
+// // 	// Создаёт диалог и отправляет результат в preload.js
+// // 	return dialog.showMessageBox({message})
+// // })
+
+// // ipcMain.handle('getSomeInfo', async (event, message) => {
+// // 	// Создаёт диалог и отправляет результат в preload.js
+// // 	// return dialog.showMessageBox({message})
+// //   return 1
+// // })
+
+// ipcMain.handle('getSomeInfo', async (event, ...args) => {
+//   // const result = await somePromise(...args)
+//   return 2
+// })
+
