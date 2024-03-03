@@ -10,6 +10,9 @@ export interface ElectronApi {
     folder: string,
     filters: ElectronFileFilter
   ) => Promise<string[]>;
+  startWatch: any,
+  stopWatch: any,
+  callNotification: any,
   send: any,
   getSomeInfo: any,
   onLog: any,

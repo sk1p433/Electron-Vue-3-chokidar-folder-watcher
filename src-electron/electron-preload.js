@@ -23,6 +23,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 import { dialog } from '@electron/remote';
 import chokidar from 'chokidar';
 
+
 const WINDOW_API = {
   openFileDialog: async (title, folder, filters) => {
       const response = await dialog.showOpenDialog({
@@ -33,46 +34,38 @@ const WINDOW_API = {
       if (!response.filePaths[0]) {
         return ('Папка не выбрана');
       } else {
-        StartWatcher(response.filePaths[0])
+        // StartWatcher(response.filePaths[0])
         return response.filePaths[0];
       }
     },
+  startWatch: (path, deep) => {
+    return StartWatcher(path, deep)
+  },
+  stopWatch: () => {
+    return StopWatcher()
+  },
+  callNotification: (message) => ipcRenderer.invoke('callNotification', message),
+
   // send: (message) => ipcRenderer.send('send', message),
   // getSomeInfo: (message) => ipcRenderer.invoke('getSomeInfo', message),
   // onLog: (callback) => ipcRenderer.on('log', (event, args) => {
   //   callback(args)
   // })  
-  
 }
 
 
 contextBridge.exposeInMainWorld('electronApi', WINDOW_API)
 
-// contextBridge.exposeInMainWorld('electronApi', {
-//   openFileDialog: async (title, folder, filters) => {
-//     const response = await dialog.showOpenDialog({
-//       // title,
-//       // filters,
-//       properties: ['openDirectory'],
-//     });
-//     console.log(response.filePaths)
-//     if(!response.filePaths[0]) {
-//       console.log('No path selected');
-//     } else {
-//       // return response.filePaths[0];
-//       return StartWatcher(response.filePaths[0])
-//     }
-//     },
-//   // send: () => ipcRenderer.send(message)  
-//   showMessageBox: (message) => ipcRenderer.invoke('electronApi', message)  
-// });
 
+let watcher = null;
 
-function StartWatcher(path){
+function StartWatcher(path, deep){
   
-  const watcher = chokidar.watch(path, {
+  watcher = chokidar.watch(path, {
     ignored: /(^|[\/\\])\../, // ignore dotfiles
-    persistent: true
+    persistent: true,
+    ignoreInitial: true,
+    depth: deep ? 99 : 0
   });
   
   // Something to use when events are received.
@@ -80,14 +73,14 @@ function StartWatcher(path){
   const broadcastChannel = new BroadcastChannel('logs');
   
   watcher
-    .on('add', path => broadcastChannel.postMessage({ path: path, action: 'change' , message: `Файл ${path} был добавлен` }))
-    .on('change', path => broadcastChannel.postMessage({ path: path, action: 'change', message: `Файл ${path} был изменён` }))
-    .on('unlink', path => broadcastChannel.postMessage({ path: path, action: 'delete', message: `Файл ${path} был удалён` }));
+    .on('add', path => broadcastChannel.postMessage({ path: path, action: 'fileAdded' , message: `Файл ${path} был добавлен` }))
+    .on('change', path => broadcastChannel.postMessage({ path: path, action: 'fileChanged', message: `Файл ${path} был изменён` }))
+    .on('unlink', path => broadcastChannel.postMessage({ path: path, action: 'fileDeleted', message: `Файл ${path} был удалён` }));
   
   // More possible events.
   watcher
-    .on('addDir', path => broadcastChannel.postMessage({ path: path, action: 'change', message: `Папка ${path} была добавлена` }))
-    .on('unlinkDir', path => broadcastChannel.postMessage({ path: path, action: 'delete', message: `Папка ${path} была удалена` }))
+    .on('addDir', path => broadcastChannel.postMessage({ path: path, action: 'folderAdded', message: `Папка ${path} была добавлена` }))
+    .on('unlinkDir', path => broadcastChannel.postMessage({ path: path, action: 'folderDeleted', message: `Папка ${path} была удалена` }))
     .on('error', error => log(`Watcher error: ${error}`))
     .on('ready', () => log('Initial scan complete. Ready for changes'))
     .on('raw', (event, path, details) => { // internal
@@ -100,6 +93,12 @@ function StartWatcher(path){
     if (stats) console.log(`File ${path} changed size to ${stats.size}`);
   });
 }
+
+function StopWatcher() {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  watcher.close()
+}
+
 
 
 

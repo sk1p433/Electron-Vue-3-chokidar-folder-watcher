@@ -1,8 +1,8 @@
 {
   "name": "vue3-electron-demo",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "productName": "Folder Watcher",
   "author": "Michael Hoffmann <michael.hoffmann@mokkapps.de>",
   "private": true,
   "scripts": {
@@ -19,7 +19,9 @@
     "pinia": "^2.0.11",
     "quasar": "^2.0.0",
     "vue": "^3.2.39",
-    "vue-router": "^4.0.0"
+    "vue-router": "^4.0.0",
+    "vue-use-sound": "^1.1.1",
+    "lodash.debounce": "^4.0.8"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme, ipcMain } from 'electron'
+import { app, BrowserWindow, nativeTheme, ipcMain, Notification, shell } from 'electron'
 import { initialize, enable } from '@electron/remote/main'
 
 import path from 'path'
@@ -36,22 +36,37 @@ function createWindow () {
 
   mainWindow.loadURL(process.env.APP_URL)
 
-  if (process.env.DEBUGGING) {
-    // if on DEV or Production with debug enabled
-    mainWindow.webContents.openDevTools()
-  }
-  else {
-    // we're on production; no access to devtools pls
-    mainWindow.webContents.on('devtools-opened', () => {
-      mainWindow.webContents.closeDevTools()
-    })
-  }
+  // if (process.env.DEBUGGING) {
+  //   // if on DEV or Production with debug enabled
+  //   mainWindow.webContents.openDevTools()
+  // }
+  // else {
+  //   // we're on production; no access to devtools pls
+  //   mainWindow.webContents.on('devtools-opened', () => {
+  //     mainWindow.webContents.closeDevTools()
+  //   })
+  // }
+
+  mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', () => {
     mainWindow = null
   })
 
+  // what I added)
+  mainWindow.webContents.setWindowOpenHandler((edata) => {
+    shell.openExternal(edata.url);
+    return { action: 'deny' };
+  });
+  // what I added)
+
   enable(mainWindow.webContents);
+}
+
+const NOTIFICATION_TITLE = 'Зафиксировано новое действие в папке'
+
+function showNotification () {
+  new Notification({ title: NOTIFICATION_TITLE, body: '' }).show()
 }
 
 app.whenReady().then(createWindow)
@@ -74,6 +89,13 @@ app.on('activate', () => {
 //   console.log(args)
 // })
 
+// ipcMain.on('send', (event, args) => {
+//   console.log(args)
+// })
+
+// ipcMain.handle('callNotification', () => {
+//   showNotification()
+// })
 
 // // ipcMain.handle('getSomeInfo', (event, message) => {
 // // 	// Создаёт диалог и отправляет результат в preload.js
@@ -86,8 +108,7 @@ app.on('activate', () => {
 // //   return 1
 // // })
 
-// ipcMain.handle('getSomeInfo', async (event, ...args) => {
-//   // const result = await somePromise(...args)
-//   return 2
-// })
+ipcMain.handle('callNotification', (event, ...args) => {
+  showNotification()
+})
 
