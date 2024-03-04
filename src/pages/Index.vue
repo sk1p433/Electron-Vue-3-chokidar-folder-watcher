@@ -193,11 +193,11 @@ const notifications = reactive<Record<string, boolean>>({
   win7: false,
 })
 
-const isDeep = ref(JSON.parse(localStorage.getItem('deep')) ?? true)
+const isDeep = ref(JSON.parse(localStorage.getItem('deep') || '{}') ?? true)
 
 const isModalShown = ref(false)
 
-const isBotActive = ref(JSON.parse(localStorage.getItem('bot')) ?? false)
+const isBotActive = ref(JSON.parse(localStorage.getItem('bot') || '{}') ?? false)
 const chatId = ref(localStorage.getItem('chatId') ?? '')
 const token = ref(localStorage.getItem('token') ?? '')
 
