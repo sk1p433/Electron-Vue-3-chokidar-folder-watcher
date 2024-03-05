@@ -18,26 +18,25 @@
  *     doAThing: () => {}
  *   })
  */
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron'
 // highlight-next-line
-import { dialog } from '@electron/remote';
-import chokidar from 'chokidar';
-
+import { dialog } from '@electron/remote'
+import chokidar from 'chokidar'
 
 const WINDOW_API = {
   openFileDialog: async (title, folder, filters) => {
-      const response = await dialog.showOpenDialog({
-        // title,
-        // filters,
-        properties: ['openDirectory'],
-      });
-      if (!response.filePaths[0]) {
-        return ('Папка не выбрана');
-      } else {
-        // StartWatcher(response.filePaths[0])
-        return response.filePaths[0];
-      }
-    },
+    const response = await dialog.showOpenDialog({
+      // title,
+      // filters,
+      properties: ['openDirectory'],
+    })
+    if (!response.filePaths[0]) {
+      return 'Папка не выбрана'
+    } else {
+      // StartWatcher(response.filePaths[0])
+      return response.filePaths[0]
+    }
+  },
   startWatch: (path, deep) => {
     return StartWatcher(path, deep)
   },
@@ -50,57 +49,79 @@ const WINDOW_API = {
   // getSomeInfo: (message) => ipcRenderer.invoke('getSomeInfo', message),
   // onLog: (callback) => ipcRenderer.on('log', (event, args) => {
   //   callback(args)
-  // })  
+  // })
 }
-
 
 contextBridge.exposeInMainWorld('electronApi', WINDOW_API)
 
+let watcher = null
 
-let watcher = null;
-
-function StartWatcher(path, deep){
-  
+function StartWatcher(path, deep) {
   watcher = chokidar.watch(path, {
     ignored: /(^|[\/\\])\../, // ignore dotfiles
     persistent: true,
     ignoreInitial: true,
-    depth: deep ? 99 : 0
-  });
-  
+    depth: deep ? 99 : 0,
+  })
+
   // Something to use when events are received.
-  const log = console.log.bind(console);
-  const broadcastChannel = new BroadcastChannel('logs');
-  
+  const log = console.log.bind(console)
+  const broadcastChannel = new BroadcastChannel('logs')
+
   watcher
-    .on('add', path => broadcastChannel.postMessage({ path: path, action: 'fileAdded' , message: `Файл ${path} был добавлен` }))
-    .on('change', path => broadcastChannel.postMessage({ path: path, action: 'fileChanged', message: `Файл ${path} был изменён` }))
-    .on('unlink', path => broadcastChannel.postMessage({ path: path, action: 'fileDeleted', message: `Файл ${path} был удалён` }));
-  
+    .on('add', (path) =>
+      broadcastChannel.postMessage({
+        path: path,
+        action: 'fileAdded',
+        message: `Файл ${path} был добавлен`,
+      })
+    )
+    .on('change', (path) =>
+      broadcastChannel.postMessage({
+        path: path,
+        action: 'fileChanged',
+        message: `Файл ${path} был изменён`,
+      })
+    )
+    .on('unlink', (path) =>
+      broadcastChannel.postMessage({
+        path: path,
+        action: 'fileDeleted',
+        message: `Файл ${path} был удалён`,
+      })
+    )
+
   // More possible events.
   watcher
-    .on('addDir', path => broadcastChannel.postMessage({ path: path, action: 'folderAdded', message: `Папка ${path} была добавлена` }))
-    .on('unlinkDir', path => broadcastChannel.postMessage({ path: path, action: 'folderDeleted', message: `Папка ${path} была удалена` }))
-    .on('error', error => log(`Watcher error: ${error}`))
+    .on('addDir', (path) =>
+      broadcastChannel.postMessage({
+        path: path,
+        action: 'folderAdded',
+        message: `Папка ${path} была добавлена`,
+      })
+    )
+    .on('unlinkDir', (path) =>
+      broadcastChannel.postMessage({
+        path: path,
+        action: 'folderDeleted',
+        message: `Папка ${path} была удалена`,
+      })
+    )
+    .on('error', (error) => log(`Watcher error: ${error}`))
     .on('ready', () => log('Initial scan complete. Ready for changes'))
-    .on('raw', (event, path, details) => { // internal
-      log('Raw event info:', event, path, details);
-    });
-  
+    .on('raw', (event, path, details) => {
+      // internal
+      log('Raw event info:', event, path, details)
+    })
+
   // 'add', 'addDir' and 'change' events also receive stat() results as second
   // argument when available: https://nodejs.org/api/fs.html#fs_class_fs_stats
   watcher.on('change', (path, stats) => {
-    if (stats) console.log(`File ${path} changed size to ${stats.size}`);
-  });
+    if (stats) console.log(`File ${path} changed size to ${stats.size}`)
+  })
 }
 
 function StopWatcher() {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   watcher.close()
 }
-
-
-
-
-
-

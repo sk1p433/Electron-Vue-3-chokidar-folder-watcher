@@ -1,4 +1,4 @@
-const { resolve } = require('path');
+const { resolve } = require('path')
 module.exports = {
   // https://eslint.org/docs/user-guide/configuring#configuration-cascading-and-hierarchy
   // This option interrupts the configuration hierarchy at this file
@@ -16,7 +16,7 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     project: resolve(__dirname, './tsconfig.json'),
     tsconfigRootDir: __dirname,
-    ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
+    ecmaVersion: 2021, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module', // Allows for the use of imports
   },
 
@@ -44,6 +44,10 @@ module.exports = {
 
     // https://github.com/prettier/eslint-config-prettier#installation
     // usage with Prettier, provided by 'eslint-config-prettier'.
+    // 'prettier',
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
     'prettier',
   ],
 
@@ -58,6 +62,7 @@ module.exports = {
     // https://github.com/typescript-eslint/typescript-eslint/issues/389#issuecomment-509292674
     // Prettier has not been included as plugin to avoid performance impact
     // add it as an extension for your IDE
+    'prettier',
   ],
 
   globals: {
@@ -80,8 +85,53 @@ module.exports = {
     // TypeScript
     quotes: ['warn', 'single', { avoidEscape: true }],
     '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/no-unsafe-assignment': 'off',
+    '@typescript-eslint/no-unsafe-call': 'off',
+    camelcase: 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      {
+        args: 'none',
+        varsIgnorePattern: '^_',
+        argsIgnorePattern: '^_',
+      },
+    ],
+    '@typescript-eslint/no-explicit-any': 'warn',
+    'vue/component-name-in-template-casing': ['error', 'PascalCase'],
+    'vue/html-button-has-type': 'error',
+    '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/no-unsafe-argument': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    'vue/no-empty-component-block': 'error',
+    'vue/no-potential-component-option-typo': ['error', { presets: ['vue', 'nuxt'] }],
+    'vue/require-default-prop': 'off',
+    'import/no-named-as-default-member': 'off',
+    'vue/no-v-html': 'off',
+    'vue/require-prop-types': 'off',
+    'vue/attributes-order': [
+      'error',
+      {
+        order: [
+          'LIST_RENDERING',
+          'CONDITIONALS',
+          'RENDER_MODIFIERS',
+          'CONTENT',
+          'SLOT',
+          'DEFINITION',
+          'TWO_WAY_BINDING',
+          'OTHER_DIRECTIVES',
+          'UNIQUE',
+          'GLOBAL',
+          'ATTR_DYNAMIC',
+          'ATTR_STATIC',
+          'ATTR_SHORTHAND_BOOL',
+          'EVENTS',
+        ],
+        alphabetical: true,
+      },
+    ],
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
   },
-};
+}
