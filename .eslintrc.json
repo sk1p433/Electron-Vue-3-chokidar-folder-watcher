@@ -1,0 +1,39 @@
+{
+    "root": true,
+    "env": {
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:vue/vue3-recommended",
+        "@vue/typescript/recommended",
+        "plugin:prettier/recommended"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 2020
+    },
+    "rules": {
+        "vue/attributes-order": [
+            "error",
+            {
+                "order": [
+                    "LIST_RENDERING",
+                    "CONDITIONALS",
+                    "RENDER_MODIFIERS",
+                    "CONTENT",
+                    "SLOT",
+                    "DEFINITION",
+                    "TWO_WAY_BINDING",
+                    "OTHER_DIRECTIVES",
+                    "UNIQUE",
+                    "GLOBAL",
+                    "ATTR_DYNAMIC",
+                    "ATTR_STATIC",
+                    "ATTR_SHORTHAND_BOOL",
+                    "EVENTS"
+                ],
+                "alphabetical": true
+            }
+        ]
+    }
+}

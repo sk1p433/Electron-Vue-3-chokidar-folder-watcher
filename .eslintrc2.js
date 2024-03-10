@@ -1,3 +1,4 @@
+// OLD SETTINGS
 const { resolve } = require('path')
 module.exports = {
   // https://eslint.org/docs/user-guide/configuring#configuration-cascading-and-hierarchy
@@ -48,7 +49,8 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
-    'prettier',
+    // 'prettier',
+    "plugin:prettier/recommended"
   ],
 
   plugins: [
@@ -57,12 +59,12 @@ module.exports = {
 
     // https://eslint.vuejs.org/user-guide/#why-doesn-t-it-work-on-vue-file
     // required to lint *.vue files
-    'vue',
+    'vue'
 
     // https://github.com/typescript-eslint/typescript-eslint/issues/389#issuecomment-509292674
     // Prettier has not been included as plugin to avoid performance impact
     // add it as an extension for your IDE
-    'prettier',
+    // 'prettier',
   ],
 
   globals: {
@@ -108,28 +110,7 @@ module.exports = {
     'import/no-named-as-default-member': 'off',
     'vue/no-v-html': 'off',
     'vue/require-prop-types': 'off',
-    'vue/attributes-order': [
-      'error',
-      {
-        order: [
-          'LIST_RENDERING',
-          'CONDITIONALS',
-          'RENDER_MODIFIERS',
-          'CONTENT',
-          'SLOT',
-          'DEFINITION',
-          'TWO_WAY_BINDING',
-          'OTHER_DIRECTIVES',
-          'UNIQUE',
-          'GLOBAL',
-          'ATTR_DYNAMIC',
-          'ATTR_STATIC',
-          'ATTR_SHORTHAND_BOOL',
-          'EVENTS',
-        ],
-        alphabetical: true,
-      },
-    ],
+
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',

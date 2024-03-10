@@ -4,9 +4,9 @@
     <div class="border" />
     <div class="buttons">
       <q-btn
-        @click="openElectronFileDialog"
         color="primary"
         size="lg"
+        @click="openElectronFileDialog"
         >Выбрать папку</q-btn
       >
       <q-btn
@@ -19,14 +19,14 @@
       </q-btn>
       <q-btn
         v-if="logs.length"
-        @click="logs = []"
         size="lg"
+        @click="logs = []"
         >Очистить лог</q-btn
       >
       <q-btn
         v-if="logs.length"
-        @click="saveFile"
         size="lg"
+        @click="saveFile"
         >Сохранить лог в файл</q-btn
       >
     </div>
@@ -52,9 +52,9 @@
     </q-card>
 
     <q-card
-      flat
-      bordered
       class="my-card"
+      bordered
+      flat
     >
       <q-card-section>
         <div class="text-h6 padding-left">Настройки</div>
@@ -63,29 +63,29 @@
       <q-card-section class="q-pt-none">
         <div class="actions padding-left">Какие действия логировать:</div>
         <q-checkbox
-          size="md"
           v-model="changes.folderAdd"
           label="Добавление папки"
+          size="md"
         />
         <q-checkbox
-          size="md"
           v-model="changes.folderDelete"
           label="Удаление папки"
+          size="md"
         />
         <q-checkbox
-          size="md"
           v-model="changes.fileAdd"
           label="Добавление файла"
+          size="md"
         />
         <q-checkbox
-          size="md"
           v-model="changes.fileDelete"
           label="Удаление файла"
+          size="md"
         />
         <q-checkbox
-          size="md"
           v-model="changes.fileChange"
           label="Изменение файла"
+          size="md"
         />
       </q-card-section>
 
@@ -94,9 +94,9 @@
       <q-card-section>
         <div class="actions padding-left">Уведомления:</div>
         <q-checkbox
-          size="md"
           :model-value="notifications.win10"
           label="Уведомление для Windows 10"
+          size="md"
           @update:model-value="
             (value) => {
               notifications.win10 = value
@@ -105,9 +105,9 @@
           "
         />
         <q-checkbox
-          size="md"
           :model-value="notifications.win7"
           label="Звуковое уведомление для Windows 7"
+          size="md"
           @update:model-value="
             (value) => {
               notifications.win7 = value
@@ -119,10 +119,10 @@
       <q-separator inset />
       <q-card-section>
         <q-checkbox
-          size="md"
           v-model="isDeep"
           :disable="isWatching"
           label="Отслеживать изменения во вложенных папках"
+          size="md"
           @update:model-value="updateDeep"
         >
           <q-tooltip v-if="isWatching">
@@ -133,8 +133,8 @@
       <q-separator inset />
       <q-card-section>
         <q-btn
-          label="Настроить отправку в телеграмм"
           color="primary"
+          label="Настроить отправку в телеграмм"
           @click="isModalShown = true"
         />
       </q-card-section>
@@ -168,39 +168,39 @@
         </q-card-section>
         <q-card-section class="q-pt-none modal">
           <q-checkbox
-            size="md"
             v-model="isBotActive"
             label="Посылать уведомления чат-боту"
+            size="md"
           />
           <q-input
             v-model="token"
+            :disable="!isBotActive"
             label="Введите token"
             outlined
-            :disable="!isBotActive"
           />
           <q-input
             v-model="chatId"
-            outlined
-            label="Введите chat id"
             :disable="!isBotActive"
+            label="Введите chat id"
+            outlined
           />
         </q-card-section>
         <q-card-section>
           <a
             href="https://sitogon.ru/blog/252-kak-sozdat-telegram-bot-poluchit-ego-token-i-chat-id?ysclid=lt1euonoa0631465213"
-            target="_blank"
             rel="noreferrer"
+            target="_blank"
           >
             Инструкция как узнать token и id чата в телеграмм
           </a>
         </q-card-section>
         <q-card-actions align="right">
           <q-btn
-            flat
-            label="OK"
-            color="primary"
             v-close-popup
             :disabled="isBotActive && (!token || !chatId)"
+            color="primary"
+            label="OK"
+            flat
             @click="onSave"
           />
           <q-tooltip v-if="isBotActive && (!token || !chatId)">
@@ -216,6 +216,7 @@
 import { electronApi } from 'src/api/electron-api'
 import { ref, reactive, watch } from 'vue'
 import useSound from 'vue-use-sound'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import soundNotice from '../assets/audio/notice.mp3'
 import debounce from 'lodash.debounce'
@@ -312,10 +313,14 @@ const openElectronFileDialog = async () => {
     extensions: ['jpg'],
   })
   if (response) {
+    console.log(response)
+    if (String(response) === 'Папка не выбрана' && folder.value) {
+      return
+    }
     folder.value = response
     localStorage.setItem('folder', String(response))
   } else {
-    folder.value = undefined
+    // folder.value = undefined
   }
 }
 
